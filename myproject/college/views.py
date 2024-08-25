@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from myproject.serializers import CollegeSerializer
 from .models import College
 import json
 
@@ -16,13 +17,15 @@ def college_list(request):
 def save_college(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        college = College.objects.create(
-            collage_name=data.get('clg_name'),
-            address=data.get('address'),
-            phone_no=data.get('mobile_number')
-        )
+        serializer = CollegeSerializer(data=data)
+        if serializer.is_valid():
+           college = College.objects.create(
+             collage_name=data.get('collage_name'),
+             address=data.get('address'),
+             phone_no=data.get('phone_no')
+            )
         return JsonResponse({'id': college.id},status=201)    
-    
+    return JsonResponse(serializer.errors,status=400)
     
 # get specific data based on id
 @csrf_exempt
@@ -55,7 +58,7 @@ def update_college(request,College_id):
 # delete existing data    
 @csrf_exempt
 def delete_College(request,College_id):
-    if request.method == 'Delete':
+    if request.method == 'DELETE':
       college_list = college.objects.get(id=College_id)
       college_list.delete()
       return JsonResponse({'id': college_list.id, 'message':"College deleted succesfully"},status=201)
