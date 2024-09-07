@@ -24,7 +24,7 @@ def save_college(request):
              address=data.get('address'),
              phone_no=data.get('phone_no')
             )
-        return JsonResponse({'id': college.id},status=201)    
+           return JsonResponse({'id': college.id},status=201)    
     return JsonResponse(serializer.errors,status=400)
     
 # get specific data based on id
